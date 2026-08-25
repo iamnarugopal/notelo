@@ -13,7 +13,7 @@ import {
 } from "@/utils/NoteStorage";
 import { FlashList } from "@shopify/flash-list";
 import { useIsFocused } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -24,6 +24,7 @@ export default function Index() {
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [searchQuery, setSearchQuery] = useState("");
 
   const loadNotes = async () => {
     try {
@@ -110,6 +111,37 @@ export default function Index() {
     loadViewMode();
   }, []);
 
+  const filteredData = useMemo(() => {
+    if (!searchQuery) {
+      return data;
+    }
+
+    const normalizedQuery = searchQuery.toLowerCase();
+
+    return data.filter((note) => {
+      const title = note.title.toLowerCase();
+      const content = note.content.toLowerCase();
+
+      return (
+        title.includes(normalizedQuery) || content.includes(normalizedQuery)
+      );
+    });
+  }, [data, searchQuery]);
+
+  const numColumns = useMemo(() => {
+    if (viewMode === "grid") {
+      return 2;
+    }
+
+    if (viewMode === "griddetail") {
+      return 3;
+    }
+
+    return 1;
+  }, [viewMode]);
+
+  const masonry = viewMode === "grid" || viewMode === "griddetail";
+
   const isDelete = selectedIds.size > 0;
 
   if (loading) {
@@ -125,25 +157,27 @@ export default function Index() {
         <HomeHeader
           viewMode={viewMode}
           onViewModeChange={handleViewModeChange}
+          onSearchQueryChange={setSearchQuery}
         />
         <AddButton isDelete={isDelete} handleDelete={handleDelete} />
 
-        {data?.length > 0 ? (
+        {filteredData.length > 0 ? (
           <FlashList
-            data={data}
-            numColumns={viewMode === "list" ? 1 : 2}
-            masonry={viewMode === "grid"}
+            data={filteredData}
+            numColumns={numColumns}
+            masonry={masonry}
             keyExtractor={(item) => String(item?.id)}
             renderItem={({ item }) => (
               <NoteCard
                 data={item}
+                viewMode={viewMode}
                 selectionMode={selectionMode}
                 selected={selectedIds.has(item.id)}
                 onLongPress={() => handleLongPress(item.id)}
                 onSelect={() => handleSelect(item.id)}
               />
             )}
-            contentContainerClassName="p-2"
+            contentContainerClassName="p-1"
             // columnWrapperClassName="gap-4"
             className="flex-1"
           />

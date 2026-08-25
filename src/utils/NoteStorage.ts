@@ -12,12 +12,21 @@ let dbInstance: SQLite.SQLiteDatabase | null = null;
 const VIEW_MODE_KEY = "notes_view_mode";
 const APP_LOCK_KEY = "app_lock_enabled";
 
-export type ViewMode = "list" | "grid";
+export type ViewMode = "list" | "listdetail" | "grid" | "griddetail";
 
 export async function getViewMode(): Promise<ViewMode> {
   const mode = await AsyncStorage.getItem(VIEW_MODE_KEY);
 
-  return mode === "list" ? "list" : "grid";
+  if (
+    mode === "list" ||
+    mode === "listdetail" ||
+    mode === "grid" ||
+    mode === "griddetail"
+  ) {
+    return mode;
+  }
+
+  return "grid";
 }
 
 export async function saveViewMode(mode: ViewMode): Promise<void> {

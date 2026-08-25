@@ -1,11 +1,40 @@
 import { Note } from "@/types/note";
 import { trimText } from "@/utils/common";
+import { ViewMode } from "@/utils/NoteStorage";
 import { useRouter } from "expo-router";
 import { Check } from "lucide-react-native";
 import { Pressable, Text, View } from "react-native";
 
+const indiaDateFormatter = new Intl.DateTimeFormat("en-IN", {
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: true,
+  timeZone: "Asia/Kolkata",
+});
+
+const formatIndianDateTime = (createdAt?: string) => {
+  if (!createdAt) {
+    return "";
+  }
+
+  const normalized = createdAt.includes("T")
+    ? createdAt
+    : `${createdAt.replace(" ", "T")}Z`;
+  const parsedDate = new Date(normalized);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return createdAt;
+  }
+
+  return indiaDateFormatter.format(parsedDate);
+};
+
 interface NoteCardProps {
   data: Note;
+  viewMode: ViewMode;
   selectionMode: boolean;
   selected: boolean;
   onLongPress: () => void;
@@ -14,6 +43,7 @@ interface NoteCardProps {
 
 const NoteCard: React.FC<NoteCardProps> = ({
   data,
+  viewMode,
   selectionMode,
   selected,
   onLongPress,
@@ -34,14 +64,20 @@ const NoteCard: React.FC<NoteCardProps> = ({
     });
   };
 
+  const titleLines = viewMode === "list" ? 1 : 2;
+  const contentLines = viewMode === "list" ? 2 : 3;
+  const createdAtLabel = formatIndianDateTime(data?.created_at);
+
   return (
-    <View className="p-2">
+    <View className="p-1">
       <Pressable
         onPress={handlePress}
         onLongPress={onLongPress}
         delayLongPress={500}
-        className={`relative flex-1 rounded-lg bg-white p-4 border-2 shadow-sm ${
-          selected ? "border-primary-start" : "border-transparent"
+        className={`relative flex-1 rounded-lg  p-4 border-2 shadow-sm ${
+          selected
+            ? "border-primary-start bg-primary-start/5"
+            : "border-transparent bg-white"
         }`}
       >
         {selectionMode && (
@@ -53,12 +89,14 @@ const NoteCard: React.FC<NoteCardProps> = ({
             {selected && <Check size={12} color="#fff" />}
           </View>
         )}
-        <Text className="font-bold mb-2 text-lg" numberOfLines={1}>
+        <Text className="mb-2 text-lg font-bold" numberOfLines={titleLines}>
           {trimText(data?.title)}
         </Text>
-        <Text className="text-gray-500 text-base" numberOfLines={4}>
+        <Text className="text-base text-gray-500" numberOfLines={contentLines}>
           {trimText(data?.content)}
         </Text>
+
+        <Text className="mt-4 text-sm text-gray-400">{createdAtLabel}</Text>
       </Pressable>
     </View>
   );

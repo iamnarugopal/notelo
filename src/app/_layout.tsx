@@ -40,11 +40,11 @@ export default function RootLayout() {
     checkLock();
 
     const subscription = AppState.addEventListener("change", (state) => {
-      if (state !== "active") {
-        setLocked(true);
-      } else {
-        checkLock();
-      }
+      // if (state !== "active") {
+      //   setLocked(true);
+      // } else {
+      //   checkLock();
+      // }
     });
 
     return () => {

@@ -40,8 +40,8 @@ function CustomDrawerContent(props: any) {
         icon={({ color, size }) => <Settings size={size} color={color} />}
         labelStyle={{ marginLeft: 10 }}
         onPress={() => {
-          props.navigation.closeDrawer();
           props.navigation.getParent()?.navigate("settings");
+          props.navigation.closeDrawer();
         }}
       />
 
