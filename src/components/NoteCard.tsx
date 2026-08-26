@@ -64,8 +64,12 @@ const NoteCard: React.FC<NoteCardProps> = ({
     });
   };
 
-  const titleLines = viewMode === "list" ? 1 : 2;
-  const contentLines = viewMode === "list" ? 2 : 3;
+  const isList = viewMode === "list";
+  const showsContent = viewMode !== "list";
+  const showsDate = viewMode === "listdetail" || isList;
+  const titleLines =
+    viewMode === "listdetail" || viewMode === "griddetail" ? 1 : 2;
+  const contentLines = viewMode === "listdetail" ? 2 : 6;
   const createdAtLabel = formatIndianDateTime(data?.created_at);
 
   return (
@@ -89,14 +93,35 @@ const NoteCard: React.FC<NoteCardProps> = ({
             {selected && <Check size={12} color="#fff" />}
           </View>
         )}
-        <Text className="mb-2 text-lg font-bold" numberOfLines={titleLines}>
-          {trimText(data?.title)}
-        </Text>
-        <Text className="text-base text-gray-500" numberOfLines={contentLines}>
-          {trimText(data?.content)}
-        </Text>
-
-        <Text className="mt-4 text-sm text-gray-400">{createdAtLabel}</Text>
+        {isList ? (
+          <View className="flex-row items-center justify-between gap-3">
+            <Text className="flex-1 text-lg font-bold" numberOfLines={2}>
+              {trimText(data?.title)}
+            </Text>
+            <Text className="text-right text-sm text-gray-400">
+              {createdAtLabel}
+            </Text>
+          </View>
+        ) : (
+          <>
+            <Text className="mb-2 text-lg font-bold" numberOfLines={titleLines}>
+              {trimText(data?.title)}
+            </Text>
+            {showsContent && (
+              <Text
+                className="text-base text-gray-500"
+                numberOfLines={contentLines}
+              >
+                {trimText(data?.content)}
+              </Text>
+            )}
+            {showsDate && (
+              <Text className="mt-4 text-sm text-gray-400">
+                {createdAtLabel}
+              </Text>
+            )}
+          </>
+        )}
       </Pressable>
     </View>
   );
