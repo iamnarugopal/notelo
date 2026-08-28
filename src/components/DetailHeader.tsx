@@ -1,21 +1,21 @@
 import { Note } from "@/types/note";
 import { LinearGradient } from "expo-linear-gradient";
 import {
-  CheckCheck,
-  EllipsisVertical,
-  MoveLeft,
-  Pen,
-  Trash2,
+    CheckCheck,
+    EllipsisVertical,
+    MoveLeft,
+    Pen,
+    Trash2,
 } from "lucide-react-native";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import {
-  Alert,
-  Modal,
-  Pressable,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Alert,
+    Modal,
+    Pressable,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -26,6 +26,7 @@ interface DetailHeaderProps {
   handleBack: () => void;
   handleDelete: () => void;
   isEditMode: boolean;
+  isBackDisabled: boolean;
   editTarget: "title" | "content";
   setEditTarget: (target: "title" | "content") => void;
   setIsEditMode: Dispatch<SetStateAction<boolean>>;
@@ -38,6 +39,7 @@ const DetailHeader: React.FC<DetailHeaderProps> = ({
   handleBack,
   handleDelete,
   isEditMode,
+  isBackDisabled,
   editTarget,
   setEditTarget,
   setIsEditMode,
@@ -89,7 +91,9 @@ const DetailHeader: React.FC<DetailHeaderProps> = ({
         <View className="flex-row items-center">
           <TouchableOpacity
             onPress={handleBack}
+            disabled={isBackDisabled}
             className="size-16 items-center justify-center"
+            style={{ opacity: isBackDisabled ? 0.35 : 1 }}
           >
             <MoveLeft size={24} color={"#fff"} />
           </TouchableOpacity>

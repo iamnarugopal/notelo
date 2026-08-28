@@ -1,14 +1,15 @@
 import { LinearGradient } from "expo-linear-gradient";
 import {
   ArrowDownUp,
-  Database,
   EllipsisVertical,
   LayoutGrid,
+  ListChecks,
   TextAlignStart,
   X,
 } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
+  Animated,
   Modal,
   Pressable,
   Text,
@@ -34,6 +35,8 @@ interface HomeHeaderProps {
   totalCount: number;
   selectedCount: number;
   handleUnselect: () => void;
+  handleSelectAll: () => void;
+  isAllSelected: boolean;
 }
 
 const HomeHeader = ({
@@ -47,6 +50,8 @@ const HomeHeader = ({
   selectedCount,
   totalCount,
   handleUnselect,
+  handleSelectAll,
+  isAllSelected,
 }: HomeHeaderProps) => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const insets = useSafeAreaInsets();
@@ -54,6 +59,8 @@ const HomeHeader = ({
   const [modalVisible, setModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState<"sort" | "view">("view");
   const [searchText, setSearchText] = useState("");
+  const [tabWidth, setTabWidth] = useState(0);
+  const tabIndicatorOffset = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -80,6 +87,26 @@ const HomeHeader = ({
     setModalVisible(false);
   };
 
+  const handleTabChange = (tab: "sort" | "view") => {
+    if (tab === activeTab) {
+      return;
+    }
+
+    setActiveTab(tab);
+
+    Animated.timing(tabIndicatorOffset, {
+      toValue: tab === "sort" ? 0 : tabWidth / 2,
+      duration: 220,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const openTab = (tab: "sort" | "view") => {
+    setActiveTab(tab);
+    tabIndicatorOffset.setValue(tab === "sort" ? 0 : tabWidth / 2);
+    setModalVisible(true);
+  };
+
   return (
     <>
       <LinearGradient
@@ -102,6 +129,16 @@ const HomeHeader = ({
                   {selectedCount}/{totalCount}
                 </Text>
               </View>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => handleSelectAll()}
+                className="size-16 items-center justify-center"
+              >
+                <ListChecks
+                  size={24}
+                  color={isAllSelected ? "#fff" : "rgba(255, 255, 255, 0.8)"}
+                />
+              </TouchableOpacity>
             </>
           ) : (
             <>
@@ -145,8 +182,8 @@ const HomeHeader = ({
         onRequestClose={() => setMenuVisible(false)}
       >
         <Pressable className="flex-1" onPress={() => setMenuVisible(false)}>
-          <View className="absolute right-0 top-16 w-2/5 bg-white py-3 shadow-lg">
-            <TouchableOpacity
+          <View className="absolute right-0 top-16 w-50 bg-white py-3 shadow-lg">
+            {/* <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => {
                 setMenuVisible(false);
@@ -155,13 +192,16 @@ const HomeHeader = ({
               className="flex-row items-center gap-3 px-6 py-3 active:bg-gray-300"
             >
               <Database size={22} color="#111827" />
-              <Text className="text-base font-semibold">Add Dummy</Text>
-            </TouchableOpacity>
+
+              <Text className="text-base font-semibold" numberOfLines={1}>
+                Add Dummy
+              </Text>
+            </TouchableOpacity> */}
             <TouchableOpacity
+              activeOpacity={0.7}
               onPress={() => {
                 setMenuVisible(false);
-                setActiveTab("sort");
-                setModalVisible(true);
+                openTab("sort");
               }}
               className="flex-row items-center gap-3 px-6 py-3 active:bg-gray-300"
             >
@@ -172,8 +212,7 @@ const HomeHeader = ({
               activeOpacity={0.7}
               onPress={() => {
                 setMenuVisible(false);
-                setActiveTab("view");
-                setModalVisible(true);
+                openTab("view");
               }}
               className="flex-row items-center gap-3 px-6 py-3 active:bg-gray-300"
             >
@@ -195,29 +234,56 @@ const HomeHeader = ({
           style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
         >
           <View className="w-full max-w-md rounded-xl bg-white p-4 shadow-2xl">
-            <View className="mb-3 flex-row border-b border-gray-200">
+            <View
+              className="mb-3 flex-row border-b border-gray-200 relative"
+              onLayout={({ nativeEvent }) =>
+                setTabWidth(nativeEvent.layout.width)
+              }
+            >
               <TouchableOpacity
-                onPress={() => setActiveTab("sort")}
-                className={`flex-1 flex-row items-center justify-center gap-2 border-b-2 p-3 ${
-                  activeTab === "sort"
-                    ? "border-teal-500"
-                    : "border-transparent"
-                }`}
+                onPress={() => handleTabChange("sort")}
+                className="flex-1 flex-row items-center justify-center gap-2 p-3"
               >
-                <ArrowDownUp size={19} color="#111827" />
-                <Text className="font-semibold">Sort</Text>
+                <ArrowDownUp
+                  size={19}
+                  color={activeTab === "sort" ? "#14b8a6" : "#111827"}
+                />
+                <Text
+                  className={`font-semibold ${
+                    activeTab === "sort" ? "text-teal-500" : "text-gray-900"
+                  }`}
+                >
+                  Sort
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => setActiveTab("view")}
-                className={`flex-1 flex-row items-center justify-center gap-2 border-b-2 p-3 ${
-                  activeTab === "view"
-                    ? "border-teal-500"
-                    : "border-transparent"
-                }`}
+                onPress={() => handleTabChange("view")}
+                className="flex-1 flex-row items-center justify-center gap-2 p-3"
               >
-                <LayoutGrid size={19} color="#111827" />
-                <Text className="font-semibold">View</Text>
+                <LayoutGrid
+                  size={19}
+                  color={activeTab === "view" ? "#14b8a6" : "#111827"}
+                />
+                <Text
+                  className={`font-semibold ${
+                    activeTab === "view" ? "text-teal-500" : "text-gray-900"
+                  }`}
+                >
+                  View
+                </Text>
               </TouchableOpacity>
+              <Animated.View
+                pointerEvents="none"
+                style={{
+                  position: "absolute",
+                  bottom: 0,
+                  left: 0,
+                  width: "50%",
+                  height: 2,
+                  backgroundColor: "#14b8a6",
+                  transform: [{ translateX: tabIndicatorOffset }],
+                }}
+              />
             </View>
             {(activeTab === "sort" ? SortList : ViewList).map((item) => {
               const Icon = item.icon;

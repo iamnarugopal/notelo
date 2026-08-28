@@ -1,6 +1,5 @@
 import "@/styles/global.css";
 import { getAppLockEnabled } from "@/utils/NoteStorage";
-import { LinearGradient } from "expo-linear-gradient";
 import * as LocalAuthentication from "expo-local-authentication";
 import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
@@ -61,22 +60,6 @@ export default function RootLayout() {
         >
           <Stack.Screen name="(drawer)" />
           <Stack.Screen name="note/[id]/detail" />
-          <Stack.Screen
-            name="settings"
-            options={{
-              headerShown: true,
-              headerTintColor: "#fff",
-              title: "Settings",
-              headerBackground: () => (
-                <LinearGradient
-                  colors={["#22b6c6", "#0fd5ac"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={{ flex: 1 }}
-                />
-              ),
-            }}
-          />
         </Stack>
         {locked && (
           <View

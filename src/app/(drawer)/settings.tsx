@@ -1,8 +1,9 @@
+import SettingsHeader from "@/components/SettingsHeader";
 import { getAppLockEnabled, saveAppLockEnabled } from "@/utils/NoteStorage";
 import { Host, Switch } from "@expo/ui";
 import * as LocalAuthentication from "expo-local-authentication";
 import { useEffect, useState } from "react";
-import { Alert, ScrollView, View } from "react-native";
+import { Alert, View } from "react-native";
 
 const Settings = () => {
   const [enabled, setEnabled] = useState(false);
@@ -50,20 +51,19 @@ const Settings = () => {
 
   return (
     <View className="flex-1 bg-background">
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View className="px-5 py-5">
-          <View className="bg-gray-200 px-5 py-3 rounded-lg">
-            <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
-              <Switch
-                label="App Lock"
-                value={enabled}
-                disabled={saving}
-                onValueChange={handleAppLockChange}
-              />
-            </Host>
-          </View>
+      <SettingsHeader />
+      <View className="px-5 py-5">
+        <View className="bg-gray-200 px-5 py-3 rounded-lg">
+          <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
+            <Switch
+              label="App Lock"
+              value={enabled}
+              disabled={saving}
+              onValueChange={handleAppLockChange}
+            />
+          </Host>
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 };

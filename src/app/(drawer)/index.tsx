@@ -106,6 +106,16 @@ export default function Index() {
     });
   };
 
+  const handleSelectAll = () => {
+    setSelectedIds(
+      isAllSelected ? new Set() : new Set(filteredData.map((note) => note.id)),
+    );
+
+    if (isAllSelected) {
+      setSelectionMode(false);
+    }
+  };
+
   const handleDelete = async () => {
     try {
       const ids = Array.from(selectedIds);
@@ -184,6 +194,10 @@ export default function Index() {
 
   const isDelete = selectedIds.size > 0;
 
+  const isAllSelected =
+    filteredData.length > 0 &&
+    filteredData.every((note) => selectedIds.has(note.id));
+
   if (loading) {
     return (
       <View style={styles.centered}>
@@ -205,6 +219,8 @@ export default function Index() {
           totalCount={filteredData.length}
           selectedCount={selectedIds.size}
           handleUnselect={handleUnselect}
+          handleSelectAll={handleSelectAll}
+          isAllSelected={isAllSelected}
         />
         <AddButton isDelete={isDelete} handleDelete={handleDelete} />
 

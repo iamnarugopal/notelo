@@ -1,11 +1,12 @@
 import "@/styles/global.css";
 import Constants from "expo-constants";
 import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from "expo-router";
 import {
   Drawer,
   DrawerContentScrollView,
-  DrawerItem,
   DrawerItemList,
+  DrawerNavigationProp,
 } from "expo-router/drawer";
 import { House, Settings } from "lucide-react-native";
 import { Text, View } from "react-native";
@@ -33,24 +34,12 @@ function CustomDrawerContent(props: any) {
       >
         <Text className="text-white text-4xl">Note Lo</Text>
       </LinearGradient>
-      {/* Drawer items */}
       <DrawerItemList {...props} />
-      <DrawerItem
-        label="Setting"
-        icon={({ color, size }) => <Settings size={size} color={color} />}
-        labelStyle={{ marginLeft: 10 }}
-        onPress={() => {
-          props.navigation.getParent()?.navigate("settings");
-          props.navigation.closeDrawer();
-        }}
-      />
-
-      {/* Bottom */}
       <View
         style={{
           marginTop: "auto",
           alignItems: "center",
-          paddingVertical: 20,
+          paddingVertical: 10,
         }}
       >
         <Text
@@ -67,6 +56,7 @@ function CustomDrawerContent(props: any) {
 }
 
 export default function DrawerLayout() {
+  const navigation = useNavigation<DrawerNavigationProp<any>>();
   return (
     <Drawer
       screenOptions={{
@@ -87,6 +77,15 @@ export default function DrawerLayout() {
         options={{
           drawerLabel: "Home",
           drawerIcon: ({ color, size }) => <House size={size} color={color} />,
+        }}
+      />
+      <Drawer.Screen
+        name="settings"
+        options={{
+          drawerLabel: "Settings",
+          drawerIcon: ({ color, size }) => (
+            <Settings size={size} color={color} />
+          ),
         }}
       />
     </Drawer>
