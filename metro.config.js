@@ -1,7 +1,6 @@
 const { getDefaultConfig } = require("expo/metro-config");
 const { withNativewind } = require("nativewind/metro");
 
-/** @type {import('expo/metro-config').MetroConfig} */
 const config = getDefaultConfig(__dirname);
 
 config.transformer.babelTransformerPath =
@@ -10,6 +9,8 @@ config.transformer.babelTransformerPath =
 config.resolver.assetExts = config.resolver.assetExts.filter(
   (ext) => ext !== "svg",
 );
+
+config.resolver.assetExts.push("wasm");
 
 config.resolver.sourceExts.push("svg");
 

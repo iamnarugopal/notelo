@@ -12,12 +12,22 @@ let dbInstance: SQLite.SQLiteDatabase | null = null;
 const VIEW_MODE_KEY = "notes_view_mode";
 const APP_LOCK_KEY = "app_lock_enabled";
 
-export type ViewMode = "list" | "grid";
+export type ViewMode = "list" | "listdetail" | "grid" | "griddetail";
+export type SortMode = "modified" | "created" | "alphabetical";
 
 export async function getViewMode(): Promise<ViewMode> {
   const mode = await AsyncStorage.getItem(VIEW_MODE_KEY);
 
-  return mode === "list" ? "list" : "grid";
+  if (
+    mode === "list" ||
+    mode === "listdetail" ||
+    mode === "grid" ||
+    mode === "griddetail"
+  ) {
+    return mode;
+  }
+
+  return "grid";
 }
 
 export async function saveViewMode(mode: ViewMode): Promise<void> {
@@ -131,9 +141,20 @@ export async function initializeDatabase(): Promise<SQLite.SQLiteDatabase> {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
         content TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       );
     `);
+
+    try {
+      await dbInstance.execAsync(
+        "ALTER TABLE notes ADD COLUMN updated_at DATETIME;",
+      );
+    } catch {}
+
+    await dbInstance.runAsync(
+      "UPDATE notes SET updated_at = created_at WHERE updated_at IS NULL;",
+    );
   }
 
   return dbInstance;
@@ -185,11 +206,10 @@ export async function updateNote(
   const encryptedTitle = await encryptContent(title, secretKey);
   const encryptedContent = await encryptContent(content, secretKey);
 
-  await db.runAsync("UPDATE notes SET title = ?, content = ? WHERE id = ?;", [
-    encryptedTitle,
-    encryptedContent,
-    id,
-  ]);
+  await db.runAsync(
+    "UPDATE notes SET title = ?, content = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?;",
+    [encryptedTitle, encryptedContent, id],
+  );
 }
 
 /**

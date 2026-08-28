@@ -20,6 +20,7 @@ const AddButton: React.FC<AddButtonProps> = ({ handleDelete, isDelete }) => {
         pathname: "/note/[id]/detail",
         params: {
           id: String(id),
+          edit: "true",
         },
       });
     } catch (error) {
