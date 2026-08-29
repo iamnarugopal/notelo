@@ -42,8 +42,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "25e696f2-ca5a-4257-af29-47e84bbbe8ba"
+        "projectId": "6bc555ee-992f-4c76-bafa-665d3e8fe1ad"
       }
-    }
+    },
+    "owner": "iamnarugopal"
   }
 }
