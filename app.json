@@ -1,15 +1,20 @@
 {
   "expo": {
-    "name": "NoteLo",
-    "slug": "notelo",
-    "version": "1.0.0",
+    "name": "Notelo",
+    "slug": "Notelo",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "scheme": "notelo",
-    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.dev007pravesh.Notelo"
+    },
     "android": {
       "predictiveBackGestureEnabled": false,
-      "package": "com.veeruk0217.notelo",
+      "package": "com.dev007pravesh.Notelo",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundColor": "#22b6c6",
