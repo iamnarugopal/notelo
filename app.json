@@ -1,12 +1,11 @@
 {
   "expo": {
     "name": "Notelo",
-    "slug": "Notelo",
+    "slug": "notelo",
     "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "scheme": "notelo",
     "ios": {
       "supportsTablet": true,
@@ -46,7 +45,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "6bc555ee-992f-4c76-bafa-665d3e8fe1ad"
+        "projectId": "cf9ab79b-40eb-4cac-b79c-7a2220b6274a"
       }
     },
     "owner": "iamnarugopal"
