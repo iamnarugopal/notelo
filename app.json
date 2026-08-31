@@ -5,15 +5,15 @@
     "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "scheme": "notelo",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.dev007pravesh.Notelo"
+      "bundleIdentifier": "com.iamnarugopal.notelo"
     },
     "android": {
       "predictiveBackGestureEnabled": false,
-      "package": "com.dev007pravesh.Notelo",
+      "package": "com.iamnarugopal.notelo",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundColor": "#22b6c6",
@@ -45,9 +45,8 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "cf9ab79b-40eb-4cac-b79c-7a2220b6274a"
+        "projectId": "f6a20b32-cd07-4236-a1c9-745de1c10d84"
       }
-    },
-    "owner": "iamnarugopal"
+    }
   }
 }
